@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PinoKino</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Контейнер для бесконечной ленты постеров */
+        .posters-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            animation: scrollPosters 120s linear infinite;
+        }
+
+        /* Затемнение фона */
+        .posters-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+
+        /* Каждый постер */
+        .poster {
+            min-width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: brightness(0.8);
+        }
+
+        /* Анимация прокрутки */
+        @keyframes scrollPosters {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-1000%);
+            }
+        }
+
+        /* Основной контент поверх фона */
+        .content {
+            position: relative;
+            z-index: 2;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Заголовок */
+        .title {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 50px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        /* Поисковая строка */
+        .search-container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #000;
+            text-align: center;
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: #666;
+            text-align: center;
+        }
+
+        /* Кнопка поиска */
+        .search-btn {
+            width: 100%;
+            max-width: 400px;
+            padding: 16px;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 25px;
+            background: #2E8B57;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 139, 87, 0.4);
+        }
+
+        .search-btn:hover {
+            background: #247A48;
+            transform: translateY(-2px);
+        }
+
+        .search-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Бесконечная лента постеров -->
+    <div class="posters-container" id="postersContainer">
+        <!-- Постеры добавляются через JavaScript -->
+    </div>
+
+    <!-- Основной контент -->
+    <div class="content">
+        <h1 class="title">PinoKino</h1>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Введите код фильма" id="filmCode">
+            <button class="search-btn" onclick="searchFilm()">Найти фильм</button>
+        </div>
+    </div>
+
+    <script>
+        // Список постеров с TMDB (темные и кинематографичные)
+        const posters = [
+            'https://keephere.ru/get/ENIvam4EO3w/o/photo.jpg', // Dune
+            'https://keephere.ru/get/5NIvanfHQaC/o/photo.jpg', // Batman
+            'https://keephere.ru/get/lNIvaoEGzOv/o/photo.jpg', // Interstellar
+            'https://keephere.ru/get/ANIvaobfEgO/o/photo.jpg', // Blade Runner
+            'https://keephere.ru/get/eNIvao0Mo1O/o/photo.jpg', // Tenet
+            'https://keephere.ru/get/3NIvapXNli1/o/photo.jpg', // Inception
+            'https://keephere.ru/get/BNIvapwHoWY/o/photo.jpg', // Avatar
+            'https://keephere.ru/get/BNIvaqExqWd/o/photo.jpg', // Matrix
+            'https://keephere.ru/get/hNIvaqXmvPS/o/photo.jpg', // John Wick
+            'https://keephere.ru/get/WNIvaqpMcFL/o/photo.jpg'  // Oppenheimer
+        ];
+
+        // Создаем бесконечную ленту постеров
+        const postersContainer = document.getElementById('postersContainer');
+        
+        // Добавляем постеры дважды для бесконечного эффекта
+        function createPosterStrip() {
+            posters.forEach(poster => {
+                const posterEl = document.createElement('div');
+                posterEl.className = 'poster';
+                posterEl.style.backgroundImage = `url(${poster})`;
+                postersContainer.appendChild(posterEl);
+            });
+        }
+
+        // Создаем две полосы для бесконечной прокрутки
+        createPosterStrip();
+        createPosterStrip();
+
+        // Функция поиска фильма
+        function searchFilm() {
+            const filmCode = document.getElementById('filmCode').value.trim();
+            if (filmCode) {
+                alert(`Поиск фильма с кодом: ${filmCode}\n\n(Это тестовый alert - в реальном приложении здесь будет переход к фильму)`);
+                // Здесь будет переход к просмотру фильма
+            } else {
+                alert('Пожалуйста, введите код фильма');
+            }
+        }
+
+        // Обработка Enter в поле ввода
+        document.getElementById('filmCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchFilm();
+            }
+        });
+
+        // Информация для тестирования
+        console.log('PinoKino главный экран загружен!');
+        console.log('Используется 10 постеров с TMDB');
+        console.log('Анимация прокрутки: 120 секунд на полный цикл');
+    </script>
+</body>
+</html>
